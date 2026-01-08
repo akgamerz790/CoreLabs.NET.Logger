@@ -2,11 +2,23 @@ using System;
 
 namespace CoreLabs.NET.Logger.SystemBackends
 {
+    public enum LogLevel
+    {
+        Information,
+        Success,
+        Warning,
+        Error
+    }
+    public enum LogLevelX
+    {
+        INFO,
+        SUCCESS,
+        WARN,
+        ERROR
+    }
+
     public interface ILogger
     {
-        void LogInformation(string message);
-        void LogSuccess(string message);
-        void LogWarning(string message);
-        void LogError(string message);
+        void Log(LogLevel level, string message);
     }
 }

@@ -1,37 +1,26 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using CoreLabs.NET.Logger.SystemBackends;
 
 namespace CoreLabs.NET.Logger.SystemBackends.LoggerAPI
 {
     public class ConsoleLogger : ILogger
     {
-        public void LogInformation(string message)
+        public void Log(LogLevel level, string message)
         {
-            Colors.ConsoleColorManager.Info();
-            Write("INFO", message);
+            Write(level, message);
         }
 
-        public void LogSuccess(string message)
+        private static void Write(LogLevel level, string message)
         {
-            Colors.ConsoleColorManager.Success();
-            Write("SUCCESS", message);
-        }
+            // set color per level
+            switch (level)
+            {
+                case LogLevel.Information: Colors.ConsoleColorManager.Info(); break;
+                case LogLevel.Success:     Colors.ConsoleColorManager.Success(); break;
+                case LogLevel.Warning:     Colors.ConsoleColorManager.Warning(); break;
+                case LogLevel.Error:       Colors.ConsoleColorManager.Error(); break;
+            }
 
-        public void LogWarning(string message)
-        {
-            Colors.ConsoleColorManager.Warning();
-            Write("WARN", message);
-        }
-
-        public void LogError(string message)
-        {
-            Colors.ConsoleColorManager.Error();
-            Write("ERROR", message);
-        }
-
-        private static void Write(string level, string message)
-        {
             Console.WriteLine($"[{level}] {DateTime.Now:yyyy-MM-dd HH:mm:ss}: {message}");
             Colors.ConsoleColorManager.Reset();
         }
