@@ -3,31 +3,25 @@ using CoreLabs.NET.Logger.SystemBackends.LoggerAPI;
 
 namespace CoreLabs.NET.Logger;
 
-public static class InfoLogging
+public static class Log
 {
-    public static void Log(string message) => LogHelper.Log(message, LogLevel.Information);
-}
-public static class SuccessLogging
-{
-    public static void Log(string message) => LogHelper.Log(message, LogLevel.Success);
-}
-public static class WarnLogging
-{
-    public static void Log(string message) => LogHelper.Log(message, LogLevel.Warning);
-}
-public static class ErrorLogging
-{
-    public static void Log(string message) => LogHelper.Log(message, LogLevel.Error);
-}
-public static class LogHelper
-{
-    private static readonly ILogger _logger = new ConsoleLogger();
+    private static readonly CoreLogger _logger = new CoreLogger()
+        .AddSink(new ConsoleLogger());
 
-    public static void Log(string message, LogLevel level)
-    {
-        _logger.Log(level, message);
-    }
+    public static LoggerOptions Options => _logger.Options;
 
-    // convenience default
-    public static void Log(string message) => Log(message, LogLevel.Information);
+    // Allow app to configure sinks at startup
+    public static void AddSink(ILogger sink) => _logger.AddSink(sink);
+
+    public static void Write(LogLevel level, string message, Exception? ex = null)
+        => _logger.Log(level, message, ex);
+
+    // Convenience
+    public static void Trace(string message) => _logger.Trace(message);
+    public static void Debug(string message) => _logger.Debug(message);
+    public static void Info(string message) => _logger.Info(message);
+    public static void Success(string message) => _logger.Success(message);
+    public static void Warn(string message) => _logger.Warn(message);
+    public static void Error(string message, Exception? ex = null) => _logger.Error(message, ex);
+    public static void Critical(string message, Exception? ex = null) => _logger.Critical(message, ex);
 }

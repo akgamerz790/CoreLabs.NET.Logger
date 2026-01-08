@@ -1,28 +1,35 @@
-using System;
 using CoreLabs.NET.Logger.SystemBackends;
 
-namespace CoreLabs.NET.Logger.SystemBackends.LoggerAPI
+namespace CoreLabs.NET.Logger.SystemBackends.LoggerAPI;
+
+public sealed class ConsoleLogger : ILogger
 {
-    public class ConsoleLogger : ILogger
+    public void Log(LogLevel level, string message, Exception? exception = null)
     {
-        public void Log(LogLevel level, string message)
+        SetColor(level);
+
+        var ts = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        Console.WriteLine($"[{level}] {ts}: {message}");
+
+        if (exception is not null)
         {
-            Write(level, message);
+            Console.WriteLine(exception); // prints type/message/stacktrace
         }
 
-        private static void Write(LogLevel level, string message)
-        {
-            // set color per level
-            switch (level)
-            {
-                case LogLevel.Information: Colors.ConsoleColorManager.Info(); break;
-                case LogLevel.Success:     Colors.ConsoleColorManager.Success(); break;
-                case LogLevel.Warning:     Colors.ConsoleColorManager.Warning(); break;
-                case LogLevel.Error:       Colors.ConsoleColorManager.Error(); break;
-            }
+        Colors.ConsoleColorManager.Reset();
+    }
 
-            Console.WriteLine($"[{level}] {DateTime.Now:yyyy-MM-dd HH:mm:ss}: {message}");
-            Colors.ConsoleColorManager.Reset();
+    private static void SetColor(LogLevel level)
+    {
+        switch (level)
+        {
+            case LogLevel.Trace:
+            case LogLevel.Debug:
+            case LogLevel.Information: Colors.ConsoleColorManager.Info(); break;
+            case LogLevel.Success:     Colors.ConsoleColorManager.Success(); break;
+            case LogLevel.Warning:     Colors.ConsoleColorManager.Warning(); break;
+            case LogLevel.Error:
+            case LogLevel.Critical:    Colors.ConsoleColorManager.Error(); break;
         }
     }
 }
